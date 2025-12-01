@@ -1,26 +1,218 @@
 @import "tailwindcss";
 
+/* Font tokens:
+   - Next's font loader (in layout.tsx) sets CSS variables:
+     --font-geist-sans and --font-geist-mono
+   - We map those into generic variables --font-sans / --font-mono with fallbacks.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    /* Map next/font variables to app-level tokens with system fallbacks */
+    --font-sans: var(
+        --font-geist-sans,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial
+    );
+    --font-mono: var(
+        --font-geist-mono,
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        "Roboto Mono",
+        "Helvetica Neue",
+        monospace
+    );
+
+    /* Existing design tokens (colors etc.) using RGB equivalents */
+    --bg: rgb(11, 18, 32); /* #0b1220 */
+    --panel: rgb(15, 23, 36); /* #0f1724 */
+    --muted: rgb(148, 163, 184); /* #94a3b8 */
+    --text: rgb(230, 238, 248); /* #e6eef8 */
+    --accent: rgb(96, 165, 250); /* #60a5fa */
+    --accent-2: rgb(124, 58, 237); /* #7c3aed */
+    --success: rgb(52, 211, 153); /* #34d399 */
+    --danger: rgb(251, 113, 133); /* #fb7185 */
+    --glass: rgba(255, 255, 255, 0.04);
+    --radius: 0.75rem;
+    --card-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Light theme overrides */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg: rgb(248, 250, 252); /* #f8fafc */
+        --panel: rgb(255, 255, 255); /* #ffffff */
+        --muted: rgb(71, 85, 105); /* #475569 */
+        --text: rgb(15, 23, 36); /* #0f1724 */
+        --accent: rgb(37, 99, 235); /* #2563eb */
+        --accent-2: rgb(124, 58, 237); /* #7c3aed */
+        --glass: rgba(2, 6, 23, 0.03);
+        --card-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+    }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body,
+#__next {
+    height: 100%;
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+/* Apply fonts */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-sans);
+    line-height: 1.5;
+}
+
+/* Monospace for code blocks and inline code */
+code,
+pre,
+kbd,
+samp {
+    font-family: var(--font-mono);
+    font-size: 0.95em;
+}
+
+/* Headings: slightly bolder / tighter */
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+}
+
+/* Shared components (kept from earlier base styles) */
+.card {
+    background: linear-gradient(180deg, var(--panel), rgba(0, 0, 0, 0.02));
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    padding: 1rem;
+    border: 1px solid var(--glass);
+}
+
+.panel {
+    background: var(--panel);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--glass);
+}
+
+/* Buttons (used in addition to Tailwind utility classes) */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        transform 0.08s ease,
+        box-shadow 0.12s ease,
+        background-color 0.12s;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* primary gradient uses RGB values */
+.btn-primary {
+    background: linear-gradient(
+        90deg,
+        rgb(96, 165, 250),
+        rgb(124, 58, 237)
+    ); /* --accent to --accent-2 */
+    color: white;
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text);
+}
+
+.btn-danger {
+    background: linear-gradient(
+        90deg,
+        rgb(255, 107, 107),
+        rgb(251, 113, 133)
+    ); /* #ff6b6b -> rgb(255,107,107) */
+    color: white;
+}
+
+/* Table styles */
+.table-soft {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: calc(var(--radius) - 2px);
+}
+
+.table-soft thead {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text);
+    font-weight: 700;
+}
+
+.table-soft tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.table-soft td,
+.table-soft th {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Utility helpers for spacing / small text */
+.kicker {
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+.subtle {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+.small {
+    font-size: 0.85rem;
+}
+
+/* Modal overlay helper */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.6);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem;
+    z-index: 50;
+}
+
+/* Smooth fade/slide */
+.fade-in {
+    animation: fadeIn 0.16s ease both;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
